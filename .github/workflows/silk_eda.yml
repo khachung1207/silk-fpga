@@ -1,0 +1,43 @@
+name: Open Source EDA For Generic Check
+
+on:
+  push:
+    # Chỉ chạy pipeline khi sửa code hoặc config
+    paths:
+      - 'rtl/**'
+      - 'tb/**'
+      - 'config.txt'
+  pull_request:
+    paths:
+      - 'rtl/**'
+      - 'tb/**'
+      - 'config.txt'
+
+jobs:
+  run_eda_pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Pull Silk EDA Image
+        
+        run: docker pull huyatieo/silk-eda:latest
+
+      - name: Chạy Pipeline
+        run: |
+          echo "=== KÍCH HOẠT SILK EDA ==="
+          # Mount toàn bộ thư mục hiện tại của sinh viên vào /workspace
+          docker run --rm -v "${{ github.workspace }}:/workspace" huyatieo/silk-eda:latest
+
+      - name: Trả kết quả cho Sinh viên (Artifacts)
+        uses: actions/upload-artifact@v4
+    
+        if: always()
+        with:
+          name: eda-results
+          path: |
+            *.svg
+            *.md
+            sim/*.vcd
+          retention-days: 7
