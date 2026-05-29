@@ -1,0 +1,67 @@
+name: Generic Pipeline
+
+on:
+  push:
+    paths:
+      - 'rtl/**'
+      - 'tb/**'
+      - 'config.txt'
+
+jobs:
+  run_eda_pipeline:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Cấp quyền cho bot được phép commit ảnh ngược lại repo
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Pull Silk EDA Image
+        run: docker pull huyatieo/silk-eda:latest
+
+      - name: Chạy Pipeline (Kèm Verilator Linting)
+        run: |
+          echo "=== KÍCH HOẠT SILK EDA ==="
+          # Chạy Docker, gen ra SVG, Markdown, VCD
+          docker run --rm -v "${{ github.workspace }}:/workspace" huyatieo/silk-eda:latest
+          
+          # Gom toàn bộ file kết quả vào một thư mục ẩn để commit
+          mkdir -p .results
+          mv *.svg *.md sim/*.vcd .results/ 2>/dev/null || true
+
+      - name: Auto-Commit Kết Quả Lên Repo
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto-generate EDA reports and SVGs"
+          file_pattern: '.results/*'
+
+      - name: Tạo Báo Cáo Trực Quan (Job Summary)
+        if: always()
+        run: |
+          # Lấy thông tin Repo và Nhánh hiện tại để tạo Raw URL chuẩn xác
+          REPO_URL="https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}"
+          
+          echo "# 📊 Báo Cáo Phân Tích Silk EDA" >> $GITHUB_STEP_SUMMARY
+          
+          # 1. Preview Module (Symbol)
+          echo "## 1. Sơ Đồ Module" >> $GITHUB_STEP_SUMMARY
+          # Trích xuất tên top module từ config.txt để gọi đúng tên file SVG
+          TOP_MODULE=$(grep "^TOP_MODULE" config.txt | awk -F'=' '{print $2}' | tr -d ' ' | tr -d '\r')
+          
+          if [ -f ".results/module_${TOP_MODULE}.svg" ]; then
+             echo "![Module Symbol](${REPO_URL}/.results/module_${TOP_MODULE}.svg)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # 2. Schematic (Netlist)
+          echo "## 2. RTL Schematic" >> $GITHUB_STEP_SUMMARY
+          if [ -f ".results/schematic_${TOP_MODULE}.svg" ]; then
+             echo "![RTL Schematic](${REPO_URL}/.results/schematic_${TOP_MODULE}.svg)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # 3. Thông số kỹ thuật (Docs)
+          echo "## 3. Thông số I/O" >> $GITHUB_STEP_SUMMARY
+          if [ -f ".results/module_docs.md" ]; then
+            tail -n +3 .results/module_docs.md >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "> 💡 **Mẹo:** Tải file \`.vcd\` trong thư mục \`.results\` để xem sóng mô phỏng." >> $GITHUB_STEP_SUMMARY
