@@ -87,20 +87,8 @@ jobs:
              echo "![Sơ Đồ Module](${REPO_URL}/generic/.results/module_${TOP_MODULE}.svg)" >> $GITHUB_STEP_SUMMARY
           fi
 
-          echo "## 2. RTL Schematic" >> $GITHUB_STEP_SUMMARY
-          if [ -f ".results/schematic_${TOP_MODULE}.svg" ]; then
-             echo "![Sơ Đồ Nguyên Lý RTL](${REPO_URL}/generic/.results/schematic_${TOP_MODULE}.svg)" >> $GITHUB_STEP_SUMMARY
-          fi
-
-          echo "## 3. Sơ Đồ Trạng Thái (FSM)" >> $GITHUB_STEP_SUMMARY
-          if [ -f ".results/fsm_${TOP_MODULE}.svg" ]; then
-             echo "![Sơ Đồ FSM](${REPO_URL}/generic/.results/fsm_${TOP_MODULE}.svg)" >> $GITHUB_STEP_SUMMARY
-          else
-             echo "*(Không phát hiện máy trạng thái - State Machine trong thiết kế này)*" >> $GITHUB_STEP_SUMMARY
-          fi
-          
           # --- HIỂN THỊ THỐNG KÊ TÀI NGUYÊN (Generic Cells) ---
-          echo "## 4. Tài Nguyên Thiết Kế (Generic Cells)" >> $GITHUB_STEP_SUMMARY
+          echo "## 2. Tài Nguyên Thiết Kế (Generic Cells)" >> $GITHUB_STEP_SUMMARY
           echo '```text' >> $GITHUB_STEP_SUMMARY
           if [ -f ".results/resource_stat.txt" ]; then
              cat .results/resource_stat.txt >> $GITHUB_STEP_SUMMARY
@@ -108,5 +96,19 @@ jobs:
              echo "Không tìm thấy dữ liệu thống kê tài nguyên." >> $GITHUB_STEP_SUMMARY
           fi
           echo '```' >> $GITHUB_STEP_SUMMARY
+
+          echo "## 3. RTL Schematic" >> $GITHUB_STEP_SUMMARY
+          if [ -f ".results/schematic_${TOP_MODULE}.svg" ]; then
+             echo "![Sơ Đồ Nguyên Lý RTL](${REPO_URL}/generic/.results/schematic_${TOP_MODULE}.svg)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "## 4. Sơ Đồ Trạng Thái (FSM)" >> $GITHUB_STEP_SUMMARY
+          if [ -f ".results/fsm_${TOP_MODULE}.svg" ]; then
+             echo "![Sơ Đồ FSM](${REPO_URL}/generic/.results/fsm_${TOP_MODULE}.svg)" >> $GITHUB_STEP_SUMMARY
+          else
+             echo "*(Không phát hiện máy trạng thái - State Machine trong thiết kế này)*" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          
           
           echo "> 💡 **Mẹo:** Tải file \`.vcd\` trong thư mục \`generic/.results\` để xem sóng mô phỏng." >> $GITHUB_STEP_SUMMARY
