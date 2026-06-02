@@ -1,14 +1,14 @@
 module array_mul_top (
-    input  wire                 clk,     // Clock hệ thống
-    input  wire                 rst_n,   // Reset tích cực mức thấp
-    input  wire [size-1:0]      a_in,    // Dữ liệu thô từ Pad
-    input  wire [size-1:0]      b_in,
-    output reg  [2*size-1:0]    p_out    // Dữ liệu đã qua thanh ghi
+    input  wire                 clk,     
+    input  wire                 rst_n, 
+    input  wire [3:0]      a_in,   
+    input  wire [3:0]      b_in,
+    output reg  [3:0]    p_out    
 );
 
     // 1. Input Registers: Chốt dữ liệu đầu vào
-    reg [size-1:0] a_reg;
-    reg [size-1:0] b_reg;
+    reg [3:0] a_reg;
+    reg [3:0] b_reg;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -21,7 +21,7 @@ module array_mul_top (
     end
 
     
-    wire [2*size-1:0] p_wire;
+    wire [7:0] p_wire;
 
     array_mul core_inst (
         .a_in(a_reg),
