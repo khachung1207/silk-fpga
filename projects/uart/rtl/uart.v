@@ -220,15 +220,24 @@ module uart_rx #(parameter
     wire mid_bit       = cycle_counter == CYCLES_PER_BIT[COUNT_REG_LEN-1:0] / 2;
 
     
+    
+    always @(posedge clk) begin
+        if (!resetn) bit_cnt <= 0;
+        else if (fsm_state == FSM_IDLE) bit_cnt <= 0;
+        else if (fsm_state == FSM_RECV && next_bit) bit_cnt <= bit_cnt + 1;
+    end
+
+    
     always @(posedge clk) begin : p_fsm_state
-        if(!resetn) begin
-            fsm_state <= FSM_IDLE;
-        end else begin
+        if(!resetn) fsm_state <= FSM_IDLE;
+        else begin
             case(fsm_state)
-                FSM_IDLE : fsm_state <= rxd_reg[0]  ? FSM_IDLE  : FSM_START;
-                FSM_STOP : fsm_state <= mid_bit     ? (rxd_reg[0] ? FSM_READY : FSM_IDLE) : FSM_STOP;
-                FSM_READY: fsm_state <= uart_rx_read? FSM_IDLE  : FSM_READY;
-                default  : fsm_state <= next_bit    ? fsm_state + 1 : fsm_state;
+                FSM_IDLE : fsm_state <= rxd_reg[0] ? FSM_IDLE : FSM_START;
+                FSM_START: fsm_state <= mid_bit    ? FSM_RECV : FSM_START;
+                FSM_RECV : fsm_state <= (next_bit && bit_cnt == 7) ? FSM_STOP : FSM_RECV;
+                FSM_STOP : fsm_state <= mid_bit    ? (rxd_reg[0] ? FSM_READY : FSM_IDLE) : FSM_STOP;
+                FSM_READY: fsm_state <= uart_rx_read ? FSM_IDLE : FSM_READY;
+                default  : fsm_state <= FSM_IDLE;
             endcase
         end
     end
