@@ -4,7 +4,7 @@ Chào mừng bạn đến với kho lưu trữ mã nguồn mở của **SILK FPG
 
 Bạn không cần cài docker hay bất kì công cụ nào về laptop, chỉ cần có 1 tài khoản Github, fork repo này về và chạy thui :>>
 
-Mình sẽ cập nhật liên tục các tool cho FPGA và ASIC trên repo này, hãy theo dõi để không bỏ lỡ nhe !!!!
+Mình sẽ cập nhật liên tục hướng dẫn trên kênh youtube này, hãy theo dõi để không bỏ lỡ nhe !!!!
 
 **Youtube Channel:** **https://www.youtube.com/@huyatieo** 
 
