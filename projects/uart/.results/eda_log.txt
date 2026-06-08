@@ -1,2 +1,7 @@
 === BẮT ĐẦU SILK-EDA ===
-❌ LỖI: Không tìm thấy config.txt!
+✅ Top Module: uart
+✅ Testbench: //cóthểđểtrống
+=== 0/4: Đang kiểm tra lỗi cú pháp và logic (Linting) ===
+%Error: Specified --top-module 'uart' was not found in design.
+%Error: Exiting due to 1 error(s)
+🛑 Hãy đọc kỹ log cảnh báo (Error/Warning) ở trên, sửa lỗi và push lại.
