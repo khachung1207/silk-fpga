@@ -334,7 +334,7 @@ module dino_ctrl #(
       if (new_round)
       begin
         y_pos     <= GROUND_TOP + vy;
-        vy        <= JUMP_V0 + GRAVITY;
+        vy        <= GRAVITY;
         on_ground <= 1'b1;
       end
       else if (game_run)
