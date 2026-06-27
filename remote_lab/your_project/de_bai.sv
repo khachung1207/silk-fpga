@@ -610,7 +610,7 @@ module renderer #(
     end
   end
 
-  wire dino_pixel = in_dino_box && dino_row_bits[local_x];
+    wire dino_pixel = in_dino_box && dino_row_bits[31-local_x];
 
   // Cactus bitmap 24x32
   wire in_obs_box =
@@ -660,7 +660,7 @@ module renderer #(
     endcase
   end
 
-  wire on_obs = in_obs_box && cactus_row_bits[23 - obs_local_x];
+    wire on_obs = in_obs_box && cactus_row_bits[31 - obs_local_x];
 
   // KO line
   localparam K_X = 10'd290;
